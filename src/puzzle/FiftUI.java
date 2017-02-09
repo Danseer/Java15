@@ -11,7 +11,7 @@ import java.util.Random;
 
 public class FiftUI extends JFrame {
 
-    private JPanel workPanel=new JPanel(new GridLayout(4,4,2,2));
+    private JPanel workPanel=new JPanel(new GridLayout(4,4,4,4));
     private int matrix [][]=new int[4][4];
     
   
@@ -46,8 +46,14 @@ public class FiftUI extends JFrame {
         workPanel.removeAll();
         for(int i=0;i<4;i++){
             for(int j=0;j<4;j++){
-                JButton button=new JButton(Integer.toString(matrix[i][j]));
+                ImageIcon icon=new ImageIcon("images/derevo.jpg");
+                JButton button=new JButton(Integer.toString(matrix[i][j]),icon);
+                button.setHorizontalTextPosition(SwingConstants.CENTER);
+                Font F = new Font("TimesRoman", Font.BOLD, 50);
+                button.setFont(F);
+                //button.setIcon(icon);
                 
+                //button.setIcon(icon);
                 if(matrix[i][j]==0) button.setVisible(false);
                 else button.addActionListener(new ClickListener());
                 
