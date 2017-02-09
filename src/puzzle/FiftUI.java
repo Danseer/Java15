@@ -6,6 +6,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseEvent;
 import java.util.Random;
 
 
@@ -13,23 +14,25 @@ public class FiftUI extends JFrame {
 
     private JPanel workPanel=new JPanel(new GridLayout(4,4,4,4));
     private int matrix [][]=new int[4][4];
-    
+     
   
     
     public FiftUI() {
      //initComponents();
+        
         setBounds(400,400,500,500);
         setResizable(false);
         setTitle("Пятнашки");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         
-       
+       workPanel.setBackground(Color.cyan);
         add(workPanel);
         Generate();
         ReDrawField();
         
         
     }
+    
 
     public void Generate(){
         
@@ -44,18 +47,23 @@ public class FiftUI extends JFrame {
     public void ReDrawField(){
         
         workPanel.removeAll();
+        
         for(int i=0;i<4;i++){
             for(int j=0;j<4;j++){
-                ImageIcon icon=new ImageIcon("images/derevo.jpg");
+                ImageIcon icon=new ImageIcon("images/derBlack.jpg");
                 JButton button=new JButton(Integer.toString(matrix[i][j]),icon);
+                button.setDoubleBuffered(true);
                 button.setHorizontalTextPosition(SwingConstants.CENTER);
                 Font F = new Font("TimesRoman", Font.BOLD, 50);
                 button.setFont(F);
-                //button.setIcon(icon);
+                button.setForeground(Color.cyan);
                 
-                //button.setIcon(icon);
                 if(matrix[i][j]==0) button.setVisible(false);
-                else button.addActionListener(new ClickListener());
+                
+                
+                else button.addMouseListener(new ClickListener());
+                //else button.addActionListener(new ClickListener());
+                
                 
                     
                 workPanel.add(button);
@@ -64,15 +72,51 @@ public class FiftUI extends JFrame {
         
     }
     
-    
-    public class ClickListener implements ActionListener {
-    public void actionPerformed(ActionEvent e) {
+    public class ClickListener implements MouseListener{
+    //public class ClickListener implements ActionListener {
+        //public void actionPerformed(ActionEvent e) {
+        public void mouseClicked(MouseEvent e) {
             JButton button = (JButton) e.getSource();
             button.setVisible(false);
             String name = button.getText();
             int num=Integer.parseInt(name);
+           spin(num);
+
+        ReDrawField();
             
-            int i = 0, j = 0;
+        }
+        
+        
+        public void mouseEntered(MouseEvent e) {
+            
+               JButton button = (JButton) e.getSource();
+                Font F = new Font("TimesRoman", Font.BOLD, 80);
+                button.setFont(F);
+          
+          }
+ 
+          public void mouseExited(MouseEvent e) {
+              
+               JButton button = (JButton) e.getSource();
+               Font F = new Font("TimesRoman", Font.BOLD, 50);
+               button.setFont(F);
+          }
+ 
+          public void mousePressed(MouseEvent e) {
+               JButton button = (JButton) e.getSource();
+               
+          }
+ 
+          public void mouseReleased(MouseEvent e) {
+               JButton button = (JButton) e.getSource();
+               
+          }
+    }
+    
+    private void spin(int num){
+        
+        int i = 0, j = 0;
+        
         for (int k = 0; k < 4; k++) {
             for (int l = 0; l < 4; l++) {
                 if (matrix[k][l] == num) {
@@ -82,11 +126,44 @@ public class FiftUI extends JFrame {
             }
         }
         
-        matrix[i][j]=0;
-        ReDrawField();
-            
+        if (i > 0) {
+            if (matrix[i - 1][j] == 0) {
+                matrix[i - 1][j] = num;
+                matrix[i][j] = 0;
+                
+            }
         }
-}
+        if (i < 3) {
+            if (matrix[i + 1][j] == 0) {
+                matrix[i + 1][j] = num;
+                matrix[i][j] = 0;
+                
+            }
+        }
+        if (j > 0) {
+            if (matrix[i][j - 1] == 0) {
+                matrix[i][j - 1] = num;
+                matrix[i][j] = 0;
+                
+                
+            }
+        }
+        if (j < 3) {
+            if (matrix[i][j + 1] == 0) {
+                matrix[i][j + 1] = num;
+                matrix[i][j] = 0;
+                
+                
+                
+                
+            }
+        }
+        
+        
+        
+        
+
+    }
     
     
     /**
