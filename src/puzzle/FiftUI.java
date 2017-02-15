@@ -14,18 +14,25 @@ public class FiftUI extends JFrame {
 
     private JPanel workPanel=new JPanel(new GridLayout(4,4,4,4));
     private int matrix [][]=new int[4][4];
+    private int Etalon []=new  int []  {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,0};
      
   
     
     public FiftUI() {
      //initComponents();
         
-        setBounds(400,400,500,500);
+        setBounds(400,400,550,550);
         setResizable(false);
         setTitle("Пятнашки");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         
-       workPanel.setBackground(Color.cyan);
+       workPanel.setBackground(Color.BLACK);
+       
+       
+       workPanel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createMatteBorder(10, 10, 10, 10, new ImageIcon("images/derevo.jpg")),
+                BorderFactory.createEmptyBorder(3, 3, 3, 3)));
+       
         add(workPanel);
         Generate();
         ReDrawField();
@@ -34,15 +41,52 @@ public class FiftUI extends JFrame {
     }
     
 
+
     public void Generate(){
-        
-        //int table []=new  int []  {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,0};
+         
+         Random generator = new Random();
+         int k;
+         int[] RandomArr = new int[16];
+         
+         for(int a=0;a<16;a++) RandomArr[a]=-1;//init array arr -1
+         
+         for(int b=0;b<16;b++){
+             
+            do {
+                k=generator.nextInt(16);// random numb 0-15
+            }
+             
+            while(RandomArr[k]!=-1) ;
+               
+               RandomArr[k]=b;
+
+         }
+         
+         
+       int c=0;
         for(int i=0;i<4;i++){
             for(int j=0;j<4;j++){
-                matrix[i][j]=(i*4+j);
+                
+                matrix[i][j]=RandomArr[c];
+                c++;
             }
         }
     }
+    public boolean CheckWin(){
+       int e=0;
+        for(int i=0;i<4;i++){
+            for(int j=0;j<4;j++){
+                if(matrix[i][j]!=Etalon[e]) 
+                {
+                    return false;
+                }
+                else e++;
+            }
+        }
+        return true;
+    }
+    
+    
     
     public void ReDrawField(){
         
@@ -50,13 +94,13 @@ public class FiftUI extends JFrame {
         
         for(int i=0;i<4;i++){
             for(int j=0;j<4;j++){
-                ImageIcon icon=new ImageIcon("images/derBlack.jpg");
+                ImageIcon icon=new ImageIcon("images/derevo.jpg");
                 JButton button=new JButton(Integer.toString(matrix[i][j]),icon);
                 button.setDoubleBuffered(true);
                 button.setHorizontalTextPosition(SwingConstants.CENTER);
                 Font F = new Font("TimesRoman", Font.BOLD, 50);
                 button.setFont(F);
-                button.setForeground(Color.cyan);
+                button.setForeground(Color.BLACK);
                 
                 if(matrix[i][j]==0) button.setVisible(false);
                 
@@ -69,6 +113,9 @@ public class FiftUI extends JFrame {
                 workPanel.add(button);
             }
         }
+        if(CheckWin()) workPanel.setBackground(Color.green);
+                else workPanel.setBackground(Color.black);
+        
         
     }
     
