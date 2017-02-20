@@ -19,6 +19,7 @@ public class FiftUI extends JFrame {
     private JLabel name=new JLabel("Name: Konstantin");
     private JLabel step=new JLabel("Step: 0");
     
+   
     
     private int matrix [][]=new int[4][4];
     private int Etalon []=new  int []  {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,0};
@@ -26,29 +27,22 @@ public class FiftUI extends JFrame {
     private int countStep=0;
     
     public FiftUI() {
-    
-        setBounds(0,0,550,750);
-        setResizable(false);
         setTitle("Пятнашки");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-                
-        workPanel.setLayout(new BorderLayout());
-        
-        workPanel.setBorder(BorderFactory.createCompoundBorder(
-              BorderFactory.createMatteBorder(10, 10, 10, 10, new ImageIcon("images/derevo.jpg")),
-              BorderFactory.createEmptyBorder(0, 0, 0, 0)));
-        add(workPanel);
-        
-        
-        
-       
-       
-       gamePanel.setSize(550, 550);
-       gamePanel.setBorder(BorderFactory.createCompoundBorder(
-              BorderFactory.createMatteBorder(20, 0, 0, 0, new ImageIcon("images/derevo.jpg")),
-              BorderFactory.createEmptyBorder(4, 3, 4, 3)));
-
-       
+        setBounds(0,0,550,700);
+        setResizable(false);
+        initScorePanel();
+        initGamePanel();
+        initWorkPanel();
+        createMenu();
+        Generate();
+        ReDrawField();
+    }
+    
+    
+    
+    //----------------------- Score Panel -------------------------------------
+    public void initScorePanel(){
         Font F = new Font("TimesRoman", Font.BOLD, 30);
         
         name.setFont(F);
@@ -61,77 +55,85 @@ public class FiftUI extends JFrame {
         scorePanel.add(name);
         scorePanel.add(step);
         scorePanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+    }
+    
+    //------------------------- Game Panel ------------------------------------
+    public void initGamePanel(){
+        gamePanel.setBorder(BorderFactory.createCompoundBorder(
+              BorderFactory.createMatteBorder(20, 0, 0, 0, new ImageIcon("images/derevo.jpg")),
+              BorderFactory.createEmptyBorder(4, 3, 4, 3)));
+    }
+    
+    //----------------------- Work Panel --------------------------------------
+    public void initWorkPanel(){
+        workPanel.setLayout(new BorderLayout());
         
-        
-        
+        workPanel.setBorder(BorderFactory.createCompoundBorder(
+              BorderFactory.createMatteBorder(10, 10, 10, 10, new ImageIcon("images/derevo.jpg")),
+              BorderFactory.createEmptyBorder(0, 0, 0, 0)));
         workPanel.add(scorePanel,BorderLayout.NORTH);
         workPanel.add(gamePanel);
-        
+        add(workPanel); 
+    }
+    //-----------------------  MENU  ---------------------------------------
+    public void createMenu(){
         JMenuBar menu=new JMenuBar();
         JMenu menuFiles=new JMenu("Menu");
         menu.add(menuFiles);
+        setJMenuBar(menu);
         
+        //-----------Action New Game-----------------------
         JMenuItem newGame=new JMenuItem("New Game");
         menuFiles.add(newGame);
         newGame.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                
                 dispose();
-                new FiftUI().setVisible(true);
-                        
+                new FiftUI().setVisible(true);          
             }
         });
+        //-------------------------------------------------
         
+        
+        //--------------Action EXIT------------------------
         JMenuItem exit=new JMenuItem("Exit");
         menuFiles.add(exit);
         exit.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                 System.exit(0);
-                 
+                 System.exit(0);     
             }
         });
-        
-        
-        setJMenuBar(menu);
-        
-        
-        
-        Generate();
-        ReDrawField();
-        
-        
+        //-------------------------------------------------    
     }
     
-    public void createMenu(){
-        
-        
-    }
-
+    
+    //-----------------Random Generate --------------------------
     public void Generate(){
          
-         Random generator = new Random();
-         int k;
-         int[] RandomArr = new int[16];
+        Random generator = new Random();
+        int k;
+        int[] RandomArr = new int[16];
          
-         for(int a=0;a<16;a++) RandomArr[a]=-1;//init array arr -1
+        for(int a=0;a<16;a++) RandomArr[a]=-1;//init array arr -1
          
-         for(int b=0;b<16;b++){
-             
-            do {
-                k=generator.nextInt(16);// random numb 0-15
-            }
-             
-            while(RandomArr[k]!=-1) ;
-               
-               RandomArr[k]=b;
+        do{   
+            for(int b=0;b<16;b++){
 
-         }
+                do {
+                    k=generator.nextInt(16);// random numb 0-15
+                }
+
+                while(RandomArr[k]!=-1) ; 
+
+                RandomArr[k]=b;
+            }
+        } 
+        while(!Opportunity(RandomArr)); 
+        
          
-         
-       int c=0;
-        for(int i=0;i<4;i++){
+        int c=0;
+        for(int i=0;i<4;i++){//fill field from rand array
             for(int j=0;j<4;j++){
                 
                 matrix[i][j]=RandomArr[c];
@@ -139,6 +141,15 @@ public class FiftUI extends JFrame {
             }
         }
     }
+    
+    //----------------------  Opportunity  ---------------------
+    public boolean Opportunity (int Array[]){
+        return true;//if possible fold
+        //return false if impossible
+    }
+    
+    
+    //-------------------- Check Win -------------------------------
     public boolean CheckWin(){
        int e=0;
         for(int i=0;i<4;i++){
@@ -153,12 +164,13 @@ public class FiftUI extends JFrame {
         return true;
     }
     
-    
+    //----------------------- Step Counter ------------------------------
     public void changeCounter(){
         countStep++;
         step.setText("Step: "+Integer.toString(countStep));
     } 
     
+    //----------------------- Draw Field -----------------------------
     public void ReDrawField(){
         
         gamePanel.removeAll();
@@ -174,63 +186,51 @@ public class FiftUI extends JFrame {
                 button.setForeground(Color.BLACK);
                 
                 if(matrix[i][j]==0) button.setVisible(false);
-                
-                
-                else button.addMouseListener(new ClickListener());
-                
-                
-                
-                    
+                    else button.addMouseListener(new ClickListener());
+
                 gamePanel.add(button);
             }
         }
         if(CheckWin()) gamePanel.setBackground(Color.green);
                 else gamePanel.setBackground(Color.black);
-        
-        
+
     }
     
+    //---------------------- Mouse-Button Listeners --------------------------
     public class ClickListener implements MouseListener{
     
         public void mouseClicked(MouseEvent e) {
+            
             JButton button = (JButton) e.getSource();
             button.setVisible(false);
             String name = button.getText();
             int num=Integer.parseInt(name);
-           spin(num);
-
-        ReDrawField();
-            
+            spin(num);
+            ReDrawField();  
         }
-        
-        
+        //-----------------------------------------------------------
         public void mouseEntered(MouseEvent e) {
             
-               JButton button = (JButton) e.getSource();
-                Font F = new Font("TimesRoman", Font.BOLD, 80);
-                button.setFont(F);
-          
-          }
- 
-          public void mouseExited(MouseEvent e) {
+            JButton button = (JButton) e.getSource();
+            Font F = new Font("TimesRoman", Font.BOLD, 80);
+            button.setFont(F);          
+        }
+        //-----------------------------------------------------------
+        public void mouseExited(MouseEvent e) {
               
-               JButton button = (JButton) e.getSource();
-               Font F = new Font("TimesRoman", Font.BOLD, 50);
-               button.setFont(F);
-          }
- 
-          public void mousePressed(MouseEvent e) {
-               JButton button = (JButton) e.getSource();
-               
-          }
- 
-          public void mouseReleased(MouseEvent e) {
-               JButton button = (JButton) e.getSource();
-               
-          }
+            JButton button = (JButton) e.getSource();
+            Font F = new Font("TimesRoman", Font.BOLD, 50);
+            button.setFont(F);
+        }
+        //-------------------------------------------------------------
+        public void mousePressed(MouseEvent e) {}
+     
+        public void mouseReleased(MouseEvent e) {}     
+          
     }
     
-    private void spin(int num){
+    //------------------------- SPIN ----------------------------------
+    private void spin(int num){ //change button on the field
         
         int i = 0, j = 0;
         
@@ -251,21 +251,20 @@ public class FiftUI extends JFrame {
                 changeCounter();
             }
         }
+        
         if (i < 3) {
             if (matrix[i + 1][j] == 0) {
                 matrix[i + 1][j] = num;
                 matrix[i][j] = 0;
                 changeCounter();
-        
             }
         }
+        
         if (j > 0) {
             if (matrix[i][j - 1] == 0) {
                 matrix[i][j - 1] = num;
                 matrix[i][j] = 0;
                changeCounter();
-        
-                
             }
         }
         if (j < 3) {
@@ -273,21 +272,13 @@ public class FiftUI extends JFrame {
                 matrix[i][j + 1] = num;
                 matrix[i][j] = 0;
                 changeCounter();
-       
-                
-                
-                
             }
         }
     }
     
     
     
-    /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
-     */
+    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -308,9 +299,7 @@ public class FiftUI extends JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    /**
-     * @param args the command line arguments
-     */
+    
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
