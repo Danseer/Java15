@@ -12,35 +12,102 @@ import java.util.Random;
 
 public class FiftUI extends JFrame {
 
-    private JPanel workPanel=new JPanel(new GridLayout(4,4,4,4));
+    private JPanel workPanel=new JPanel();
+    private JPanel scorePanel=new JPanel(new GridLayout(2,1,4,4));
+    private JPanel gamePanel=new JPanel(new GridLayout(4,4,4,4));
+    
+    private JLabel name=new JLabel("Name: Konstantin");
+    private JLabel step=new JLabel("Step: 0");
+    
+    
     private int matrix [][]=new int[4][4];
     private int Etalon []=new  int []  {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,0};
      
-  
+    private int countStep=0;
     
     public FiftUI() {
-     //initComponents();
-        
-        setBounds(400,400,550,550);
+    
+        setBounds(0,0,550,750);
         setResizable(false);
         setTitle("Пятнашки");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
+                
+        workPanel.setLayout(new BorderLayout());
         
-       workPanel.setBackground(Color.BLACK);
-       
-       
-       workPanel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createMatteBorder(10, 10, 10, 10, new ImageIcon("images/derevo.jpg")),
-                BorderFactory.createEmptyBorder(3, 3, 3, 3)));
-       
+        workPanel.setBorder(BorderFactory.createCompoundBorder(
+              BorderFactory.createMatteBorder(10, 10, 10, 10, new ImageIcon("images/derevo.jpg")),
+              BorderFactory.createEmptyBorder(0, 0, 0, 0)));
         add(workPanel);
+        
+        
+        
+       
+       
+       gamePanel.setSize(550, 550);
+       gamePanel.setBorder(BorderFactory.createCompoundBorder(
+              BorderFactory.createMatteBorder(20, 0, 0, 0, new ImageIcon("images/derevo.jpg")),
+              BorderFactory.createEmptyBorder(4, 3, 4, 3)));
+
+       
+        Font F = new Font("TimesRoman", Font.BOLD, 30);
+        
+        name.setFont(F);
+        name.setForeground(Color.GREEN);
+        
+        step.setFont(F);
+        step.setForeground(Color.GREEN);
+        
+        scorePanel.setBackground(Color.black);
+        scorePanel.add(name);
+        scorePanel.add(step);
+        scorePanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        
+        
+        
+        workPanel.add(scorePanel,BorderLayout.NORTH);
+        workPanel.add(gamePanel);
+        
+        JMenuBar menu=new JMenuBar();
+        JMenu menuFiles=new JMenu("Menu");
+        menu.add(menuFiles);
+        
+        JMenuItem newGame=new JMenuItem("New Game");
+        menuFiles.add(newGame);
+        newGame.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                
+                dispose();
+                new FiftUI().setVisible(true);
+                        
+            }
+        });
+        
+        JMenuItem exit=new JMenuItem("Exit");
+        menuFiles.add(exit);
+        exit.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                 System.exit(0);
+                 
+            }
+        });
+        
+        
+        setJMenuBar(menu);
+        
+        
+        
         Generate();
         ReDrawField();
         
         
     }
     
-
+    public void createMenu(){
+        
+        
+    }
 
     public void Generate(){
          
@@ -87,10 +154,14 @@ public class FiftUI extends JFrame {
     }
     
     
+    public void changeCounter(){
+        countStep++;
+        step.setText("Step: "+Integer.toString(countStep));
+    } 
     
     public void ReDrawField(){
         
-        workPanel.removeAll();
+        gamePanel.removeAll();
         
         for(int i=0;i<4;i++){
             for(int j=0;j<4;j++){
@@ -106,22 +177,21 @@ public class FiftUI extends JFrame {
                 
                 
                 else button.addMouseListener(new ClickListener());
-                //else button.addActionListener(new ClickListener());
+                
                 
                 
                     
-                workPanel.add(button);
+                gamePanel.add(button);
             }
         }
-        if(CheckWin()) workPanel.setBackground(Color.green);
-                else workPanel.setBackground(Color.black);
+        if(CheckWin()) gamePanel.setBackground(Color.green);
+                else gamePanel.setBackground(Color.black);
         
         
     }
     
     public class ClickListener implements MouseListener{
-    //public class ClickListener implements ActionListener {
-        //public void actionPerformed(ActionEvent e) {
+    
         public void mouseClicked(MouseEvent e) {
             JButton button = (JButton) e.getSource();
             button.setVisible(false);
@@ -169,6 +239,7 @@ public class FiftUI extends JFrame {
                 if (matrix[k][l] == num) {
                     i = k;
                     j = l;
+                            
                 }
             }
         }
@@ -177,21 +248,23 @@ public class FiftUI extends JFrame {
             if (matrix[i - 1][j] == 0) {
                 matrix[i - 1][j] = num;
                 matrix[i][j] = 0;
-                
+                changeCounter();
             }
         }
         if (i < 3) {
             if (matrix[i + 1][j] == 0) {
                 matrix[i + 1][j] = num;
                 matrix[i][j] = 0;
-                
+                changeCounter();
+        
             }
         }
         if (j > 0) {
             if (matrix[i][j - 1] == 0) {
                 matrix[i][j - 1] = num;
                 matrix[i][j] = 0;
-                
+               changeCounter();
+        
                 
             }
         }
@@ -199,18 +272,15 @@ public class FiftUI extends JFrame {
             if (matrix[i][j + 1] == 0) {
                 matrix[i][j + 1] = num;
                 matrix[i][j] = 0;
-                
+                changeCounter();
+       
                 
                 
                 
             }
         }
-        
-        
-        
-        
-
     }
+    
     
     
     /**
